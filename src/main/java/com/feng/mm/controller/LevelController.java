@@ -1,6 +1,7 @@
 package com.feng.mm.controller;
 
 import com.feng.mm.domain.entity.Level;
+import com.feng.mm.exception.ServiceException;
 import com.feng.mm.service.LevelService;
 import com.feng.mm.utils.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +18,7 @@ public class LevelController {
     LevelService levelService;
 
     @GetMapping("/list")
-    public ResponseEntity list() {
+    public ResponseEntity list() throws ServiceException {
         List<Level> levels = levelService.levelList();
         return ResponseEntity.success(levels);
     }
