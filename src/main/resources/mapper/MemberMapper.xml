@@ -1,0 +1,71 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.feng.mm.mapper.MemberMapper">
+    <resultMap id="BaseResultMap" type="Member">
+        <id property="mid" column="mid"/>
+        <result property="mname" column="mname"/>
+        <result property="sex" column="sex"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="address" column="address"/>
+        <result property="points" column="points"/>
+        <result property="createTime" column="create_time"/>
+        <result property="lid" column="lid"/>
+        <result property="status" column="status"/>
+    </resultMap>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select mid, mname, sex, phone, email, address, points, create_time, lid, status
+        from member
+        where status=1
+        <if test="keyword != null">
+            and (mname like concat('%',#{keyword},'%')
+            or phone like concat('%',#{keyword},'%')
+            or email like concat('%',#{keyword},'%'))
+        </if>
+        <if test="createDate != null">
+            and create_time between concat(#{createDate},'00:00:00') and concat(#{createDate},'23:59:59')
+        </if>
+        limit #{limit}, #{offset}
+    </select>
+    <insert id="insertMember">
+        insert into member(mname, sex, phone, email, address, status)
+        VALUES (#{member.mname},#{member.sex},#{member.phone},#{param1.email},#{member.address},#{member.status})
+    </insert>
+    <update id="deleteMember">
+        update member
+        set status=0
+        where mid=#{mid} and status=1
+    </update>
+    <update id="updateMember">
+        update member
+        <trim prefix="set" suffixOverrides=",">
+            <if test="member.mname != null">
+                mname=#{member.mname},
+            </if>
+            <if test="member.sex != null">
+                sex=#{member.sex},
+            </if>
+            <if test="member.phone != null">
+                phone=#{member.phone},
+            </if>
+            <if test="member.email != null">
+                email=#{member.email},
+            </if>
+            <if test="member.address != null">
+                address=#{member.address},
+            </if>
+            <if test="member.status != null">
+                status=#{member.status},
+            </if>
+        </trim>
+        where mid=#{member.mid}
+    </update>
+    <update id="deleteMemberBatch">
+        update member
+        set status=0
+        where mid in
+        <foreach collection="mids" item="mid" separator="," open="(" close=")">
+            #{mid}
+        </foreach>
+    </update>
+</mapper>
